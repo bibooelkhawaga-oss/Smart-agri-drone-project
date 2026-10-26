@@ -1,1 +1,1 @@
-# Smart-agri-drone-project
+# Smart agri-drone project

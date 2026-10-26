@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة الدرون الزراعي الذكي | Smart Agri-Drone Platform</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Font Cairo -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cyber: {
+                            dark: '#050b14',
+                            card: '#0d1829',
+                            border: '#1e293b',
+                            lime: '#84cc16',
+                            emerald: '#10b981',
+                            cyan: '#06b6d4',
+                            accent: '#3b82f6',
+                            red: '#ef4444'
+                        }
+                    },
+                    fontFamily: {
+                        cairo: ['Cairo', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #050b14;
+            color: #f8fafc;
+            overflow-x: hidden;
+        }
+
+        .mesh-bg {
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(132, 204, 22, 0.08) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(6, 182, 212, 0.08) 0px, transparent 50%),
+                radial-gradient(at 50% 100%, rgba(16, 185, 129, 0.05) 0px, transparent 50%);
+        }
+
+        .neon-glow-lime {
+            box-shadow: 0 0 20px rgba(132, 204, 22, 0.25);
+        }
+
+        .neon-glow-cyan {
+            box-shadow: 0 0 20px rgba(6, 182, 212, 0.25);
+        }
+
+        .neon-text-lime {
+            text-shadow: 0 0 10px rgba(132, 204, 22, 0.5);
+        }
+
+        .glass-panel {
+            background: rgba(13, 24, 41, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #050b14;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #84cc16;
+        }
+    </style>
+</head>
+<body class="mesh-bg min-h-screen flex flex-col justify-between">
+
+    <!-- Header / Navbar -->
+    <header class="sticky top-0 z-50 glass-panel border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-lime-500 to-cyan-500 flex items-center justify-center neon-glow-lime">
+                    <i class="fa-solid fa-drone text-slate-950 text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-black bg-gradient-to-r from-lime-400 via-emerald-400 to-cyan-400 bg-clip-text text-transparent">
+                        AgriDrone AI
+                    </h1>
+                    <p class="text-xs text-slate-400">منصة الزراعة الدقيقة للطائرات بدون طيار</p>
+                </div>
+            </div>
+
+            <nav class="hidden md:flex items-center gap-8 text-sm font-semibold">
+                <a href="#simulator" class="hover:text-lime-400 transition-colors">المحاكي التفاعلي</a>
+                <a href="#ndvi" class="hover:text-lime-400 transition-colors">تحليل الصحة النباتية</a>
+                <a href="#telemetry" class="hover:text-lime-400 transition-colors">بيانات التربة</a>
+                <a href="#calculator" class="hover:text-lime-400 transition-colors">حاسبة العائد ROI</a>
+                <a href="#opensource" class="hover:text-lime-400 transition-colors">المصادر المفتوحة</a>
+            </nav>
+
+            <a href="#simulator" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-lime-500 to-emerald-500 text-slate-950 font-bold text-sm hover:opacity-90 transition-all neon-glow-lime">
+                بدء المحاكاة الحية
+            </a>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-16">
+
+        <!-- Hero Section -->
+        <section class="text-center space-y-6 pt-6">
+            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-panel border border-lime-500/30 text-lime-400 text-xs font-bold">
+                <span class="w-2 h-2 rounded-full bg-lime-400 animate-pulse"></span>
+                تكنولوجيا الزراعة الرقمية والذكاء الاصطناعي
+            </div>
+            <h2 class="text-4xl md:text-6xl font-black leading-tight max-w-4xl mx-auto">
+                رصد المحاصيل والزراعة الدقيقة عبر <span class="bg-gradient-to-r from-lime-400 to-cyan-400 bg-clip-text text-transparent">الدرون الذكي</span>
+            </h2>
+            <p class="text-slate-400 max-w-2xl mx-auto text-base md:text-lg">
+                حلول هندسية متكاملة تتيح للمزارعين والمستثمرين رصد صحة النباتات، تحليل خصائص التربة، والرش الموجه لتقليل الموارد وزيادة الإنتاجية بنسبة تصل إلى 40%.
+            </p>
+        </section>
+
+        <!-- Main Interactive Drone Simulator -->
+        <section id="simulator" class="glass-panel rounded-3xl p-6 md:p-8 space-y-6 border border-slate-800">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h3 class="text-2xl font-bold flex items-center gap-2">
+                        <i class="fa-solid fa-gamepad text-lime-400"></i> محاكي طيران وحقن الدرون التفاعلي
+                    </h3>
+                    <p class="text-sm text-slate-400">اختر المهمة واضغط على الخريطة لتوجيه الطائرة وتنفيذ العمليات بالجرعة المحددة تلقائياً.</p>
+                </div>
+                
+                <!-- Command Control Buttons -->
+                <div class="flex flex-wrap gap-2">
+                    <button onclick="executeTask('spray')" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-lime-500/20 hover:border-lime-500 border border-slate-700 text-sm font-semibold transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-droplet text-cyan-400"></i> الرش الموجه
+                    </button>
+                    <button onclick="executeTask('seeds')" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-lime-500/20 hover:border-lime-500 border border-slate-700 text-sm font-semibold transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-seedling text-lime-400"></i> نشر البذور
+                    </button>
+                    <button onclick="executeTask('scan')" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-lime-500/20 hover:border-lime-500 border border-slate-700 text-sm font-semibold transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-expand text-emerald-400"></i> رصد NDVI
+                    </button>
+                    <button onclick="executeTask('soil')" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-lime-500/20 hover:border-lime-500 border border-slate-700 text-sm font-semibold transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-flask text-purple-400"></i> فحص التربة
+                    </button>
+                    <button onclick="stopSimulation()" class="px-4 py-2 rounded-xl bg-rose-500/20 hover:bg-rose-500 border border-rose-500/50 text-rose-300 hover:text-slate-950 text-sm font-bold transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-ban"></i> إيقاف / إعادة ضبط
+                    </button>
+                </div>
+            </div>
+
+            <!-- Canvas Container -->
+            <div class="relative w-full h-[450px] bg-slate-950 rounded-2xl overflow-hidden border border-slate-800">
+                <canvas id="droneCanvas" class="w-full h-full cursor-crosshair"></canvas>
+                
+                <!-- Canvas HUD Layer -->
+                <div class="absolute top-4 right-4 glass-panel p-3 rounded-xl border border-slate-800 text-xs space-y-1.5 w-48">
+                    <div class="flex justify-between">
+                        <span class="text-slate-400">المهمة الحالية:</span>
+                        <span id="hudTask" class="font-bold text-lime-400">جاهز (Hover)</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-slate-400">الحمولة المتبقية:</span>
+                        <span id="hudTank" class="font-bold text-cyan-400">100%</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-slate-400">السرعة:</span>
+                        <span class="font-bold text-slate-200">14.2 كم/س</span>
+                    </div>
+                </div>
+
+                <div class="absolute bottom-4 right-4 left-4 glass-panel p-3 rounded-xl border border-slate-800 text-xs flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <span class="text-slate-400">سجل الأوامر:</span>
+                        <span id="commandLog" class="text-lime-400 font-mono">في انتظار إعطاء التعليمات...</span>
+                    </div>
+                    <div class="w-32 bg-slate-800 h-2 rounded-full overflow-hidden">
+                        <div id="progressBar" class="bg-gradient-to-r from-lime-400 to-cyan-400 h-full w-0 transition-all duration-300"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Feature 1: NDVI Health Comparison Scanner -->
+        <section id="ndvi" class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+            <div class="space-y-4">
+                <div class="inline-flex items-center gap-2 text-lime-400 text-sm font-bold">
+                    <i class="fa-solid fa-microscope"></i> الرصد البصري والطيفي
+                </div>
+                <h3 class="text-3xl font-black">تحليل المؤشر الطيفي لصحة النباتات (NDVI)</h3>
+                <p class="text-slate-400 leading-relaxed">
+                    تستخدم الطائرات بدون طيار كاميرات متعددة الأطياف (Multispectral Cameras) لالتقاط الأشعة تحت الحمراء القريبة (NIR). يساعد هذا الأسلوب في كشف الإجهاد المائي ونقص المغذيات قبل ظهور العلامات البصرية بالعين المجردة بأسابيع.
+                </p>
+                <div class="grid grid-cols-2 gap-4 pt-2">
+                    <div class="glass-panel p-4 rounded-2xl border-slate-800">
+                        <div class="text-lime-400 font-bold text-lg">94%</div>
+                        <div class="text-xs text-slate-400">دقة التنبؤ بالأمراض الفطرية</div>
+                    </div>
+                    <div class="glass-panel p-4 rounded-2xl border-slate-800">
+                        <div class="text-cyan-400 font-bold text-lg">-60%</div>
+                        <div class="text-xs text-slate-400">خفض استخدام المبيدات الكيميائية</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- NDVI Slider Tool -->
+            <div class="glass-panel p-6 rounded-3xl border border-slate-800 space-y-4">
+                <h4 class="font-bold text-sm text-slate-300">مقارن الصور الحية (طبيعي VS طيفي)</h4>
+                <div class="relative h-64 rounded-2xl overflow-hidden border border-slate-700 bg-slate-900">
+                    <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=1000&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover" alt="Normal View">
+                    <div id="ndviLayer" class="absolute inset-0 w-1/2 overflow-hidden border-r-2 border-lime-400">
+                        <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=1000&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover filter hue-rotate-90 contrast-200 saturate-200" alt="NDVI View">
+                    </div>
+                </div>
+                <input type="range" min="0" max="100" value="50" class="w-full accent-lime-400" id="ndviSlider" oninput="updateNdviSlider(this.value)">
+                <div class="flex justify-between text-xs text-slate-400 font-bold">
+                    <span>رؤية طبيعية (RGB)</span>
+                    <span>رؤية طيفية كاشفة (NDVI)</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Feature 2: Telemetry & Soil Sensor Dashboard -->
+        <section id="telemetry" class="glass-panel rounded-3xl p-6 md:p-8 space-y-6 border border-slate-800">
+            <div class="flex flex-col md:flex-row justify-between md:items-center gap-4">
+                <div>
+                    <h3 class="text-2xl font-bold flex items-center gap-2">
+                        <i class="fa-solid fa-chart-line text-cyan-400"></i> لوحة قراءات التربة والمحصول المباشرة
+                    </h3>
+                    <p class="text-sm text-slate-400">بيانات يتم تحديثها تلقائياً عبر المستشعرات الجوية والأرضية للدرون.</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="glass-panel p-4 rounded-2xl border-slate-800 space-y-2">
+                    <div class="text-xs text-slate-400">متوسط رطوبة التربة</div>
+                    <div class="text-3xl font-black text-cyan-400" id="moistureVal">42%</div>
+                    <div class="text-xs text-emerald-400">مستوى مثالي للري</div>
+                </div>
+                <div class="glass-panel p-4 rounded-2xl border-slate-800 space-y-2">
+                    <div class="text-xs text-slate-400">مستوى النيتروجين (N)</div>
+                    <div class="text-3xl font-black text-lime-400" id="nitrogenVal">78 PPM</div>
+                    <div class="text-xs text-lime-400">+5% بعد آخر عملية سماد</div>
+                </div>
+                <div class="glass-panel p-4 rounded-2xl border-slate-800 space-y-2">
+                    <div class="text-xs text-slate-400">حرارة المحيط الزراعي</div>
+                    <div class="text-3xl font-black text-amber-400">28°C</div>
+                    <div class="text-xs text-slate-400">درجة حرارة مستقرة</div>
+                </div>
+            </div>
+
+            <!-- Chart.js Canvas -->
+            <div class="h-72 w-full pt-4">
+                <canvas id="telemetryChart"></canvas>
+            </div>
+        </section>
+
+        <!-- Feature 3: Smart ROI Calculator -->
+        <section id="calculator" class="glass-panel rounded-3xl p-6 md:p-8 border border-slate-800 space-y-6">
+            <div>
+                <h3 class="text-2xl font-bold flex items-center gap-2">
+                    <i class="fa-solid fa-calculator text-lime-400"></i> حاسبة العائد الاستثماري والوفر الذكي (ROI)
+                </h3>
+                <p class="text-sm text-slate-400">حدد مساحة المزرعة ونوع المحصول لمعرفة الوفر المالي والمائي المتوقع استخدام تقنيات الدرون.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 mb-2">مساحة المزرعة (بالهكتار): <span id="areaVal" class="text-lime-400">50</span> هكتار</label>
+                        <input type="range" min="5" max="500" value="50" class="w-full accent-lime-400" id="areaSlider" oninput="calculateROI()">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 mb-2">نوع المحصول</label>
+                        <select id="cropType" onchange="calculateROI()" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm font-semibold text-slate-200">
+                            <option value="wheat">حبوب وقماح</option>
+                            <option value="fruits">أشجار فاكهة وبساتين</option>
+                            <option value="vegetables">خضراوات محمية</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- ROI Calculation Output Box -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="glass-panel p-5 rounded-2xl border-lime-500/30 text-center space-y-1">
+                        <div class="text-xs text-slate-400">التوفير المالي السنوي</div>
+                        <div id="roiSavings" class="text-2xl font-black text-lime-400">$12,500</div>
+                    </div>
+                    <div class="glass-panel p-5 rounded-2xl border-cyan-500/30 text-center space-y-1">
+                        <div class="text-xs text-slate-400">الوفر في مياه الري</div>
+                        <div id="roiWater" class="text-2xl font-black text-cyan-400">350,000 لتر</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Feature 4: Open Source Stack -->
+        <section id="opensource" class="space-y-6">
+            <div class="text-center space-y-2">
+                <h3 class="text-3xl font-black">تقنيات وحزم مفتوحة المصدر (Open Source)</h3>
+                <p class="text-slate-400 text-sm max-w-xl mx-auto">تعتمد المنظومة على برمجيات حرة وأدوات مطورة عالمياً لتغذية أنظمة الطيران والتحليل الطيفي.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div class="glass-panel p-6 rounded-2xl border-slate-800 space-y-3">
+                    <div class="w-10 h-10 rounded-xl bg-lime-500/10 text-lime-400 flex items-center justify-center font-bold">AP</div>
+                    <h4 class="font-bold">ArduPilot / PX4</h4>
+                    <p class="text-xs text-slate-400">أنظمة التحكم بالحركة والملاحة الذاتية للطائرات بدون طيار.</p>
+                </div>
+                <div class="glass-panel p-6 rounded-2xl border-slate-800 space-y-3">
+                    <div class="w-10 h-10 rounded-xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center font-bold">CV</div>
+                    <h4 class="font-bold">OpenCV & YOLO</h4>
+                    <p class="text-xs text-slate-400">مكتبات الرؤية الحاسوبية لمعالجة الصور الكاشفة عن الآفات.</p>
+                </div>
+                <div class="glass-panel p-6 rounded-2xl border-slate-800 space-y-3">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center font-bold">GIS</div>
+                    <h4 class="font-bold">QGIS & GDAL</h4>
+                    <p class="text-xs text-slate-400">تحليل الخرائط الجغرافية وتصدير البيانات الطيفية للمزارع.</p>
+                </div>
+                <div class="glass-panel p-6 rounded-2xl border-slate-800 space-y-3">
+                    <div class="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center font-bold">JS</div>
+                    <h4 class="font-bold">Chart.js & Leaflet</h4>
+                    <p class="text-xs text-slate-400">أدوات العرض التفاعلي وتصور البيانات الجغرافية والزمنية.</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800 glass-panel mt-16 py-8">
+        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500 space-y-2">
+            <p>مشروع منصة الزراعة التفاعلية بالطائرات بدون طيار | إعداد وتطوير تكنولوجي مفتوح المصدر</p>
+            <p>© 2026 جميع الحقوق محفوظة</p>
+        </div>
+    </footer>
+
+    <!-- Scripts Logic -->
+    <script>
+        // Canvas & Drone Simulation Logic
+        const canvas = document.getElementById('droneCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        function resizeCanvas() {
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = canvas.parentElement.clientHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        let drone = {
+            x: canvas.width / 2,
+            y: canvas.height / 2,
+            targetX: canvas.width / 2,
+            targetY: canvas.height / 2,
+            angle: 0
+        };
+
+        let currentTask = 'idle';
+        let tankAmount = 100;
+        let progress = 0;
+        let particles = [];
+
+        canvas.addEventListener('click', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            drone.targetX = e.clientX - rect.left;
+            drone.targetY = e.clientY - rect.top;
+            logCommand(`تم تحديث إحداثيات الهدف إلى: (${Math.round(drone.targetX)}, ${Math.round(drone.targetY)})`);
+        });
+
+        function executeTask(taskType) {
+            currentTask = taskType;
+            progress = 0;
+            
+            if (taskType === 'spray') {
+                tankAmount = 100;
+                logCommand('بدء عملية الرش الموجه: الجرعة المطلوبة 100 لتر.');
+            } else if (taskType === 'seeds') {
+                tankAmount = 500;
+                logCommand('بدء نشر البذور: 500 كبسولة محددة تلقائياً.');
+            } else if (taskType === 'scan') {
+                logCommand('بدء رصد ومسح NDVI لصحة النباتات...');
+            } else if (taskType === 'soil') {
+                logCommand('بدء فحص وتحليل مكونات التربة...');
+            }
+            updateHud();
+        }
+
+        function stopSimulation() {
+            currentTask = 'idle';
+            progress = 0;
+            particles = [];
+            logCommand('تم إيقاف العملية وإعادة ضبط الطائرة يدوياً.');
+            updateHud();
+        }
+
+        function logCommand(msg) {
+            document.getElementById('commandLog').innerText = msg;
+        }
+
+        function updateHud() {
+            const taskTextMap = {
+                'idle': 'جاهز (Hover)',
+                'spray': 'الرش الموجه',
+                'seeds': 'نشر البذور',
+                'scan': 'رصد NDVI',
+                'soil': 'فحص التربة'
+            };
+            document.getElementById('hudTask').innerText = taskTextMap[currentTask] || 'جاهز';
+            document.getElementById('hudTank').innerText = (currentTask === 'spray' || currentTask === 'seeds') ? `${Math.max(0, Math.floor(tankAmount))}%` : '100%';
+            document.getElementById('progressBar').style.width = `${progress}%`;
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw Field Grid
+            ctx.strokeStyle = 'rgba(30, 41, 59, 0.5)';
+            ctx.lineWidth = 1;
+            const gridSize = 40;
+            for(let x = 0; x < canvas.width; x += gridSize) {
+                ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+            }
+            for(let y = 0; y < canvas.height; y += gridSize) {
+                ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+            }
+
+            // Move Drone smoothly
+            const dx = drone.targetX - drone.x;
+            const dy = drone.targetY - drone.y;
+            drone.x += dx * 0.05;
+            drone.y += dy * 0.05;
+
+            // Dosing Progress Simulation
+            if (currentTask === 'spray') {
+                tankAmount -= 0.4;
+                progress = Math.min(100, Math.floor(((100 - tankAmount) / 100) * 100));
+                
+                // Add spray particles
+                particles.push({x: drone.x, y: drone.y, radius: Math.random() * 15 + 5, alpha: 0.6, color: '#06b6d4'});
+
+                if (tankAmount <= 0) {
+                    tankAmount = 0;
+                    progress = 100;
+                    logCommand('✅ اكتملت عملية الرش الموجه بالجرعة المطلوبة وتوقفت العملية أوتوماتيكياً.');
+                    currentTask = 'idle';
+                }
+            } else if (currentTask === 'seeds') {
+                tankAmount -= 2;
+                progress = Math.min(100, Math.floor(((500 - tankAmount) / 500) * 100));
+                particles.push({x: drone.x + (Math.random()*20-10), y: drone.y + (Math.random()*20-10), radius: 3, alpha: 0.9, color: '#84cc16'});
+
+                if (tankAmount <= 0) {
+                    tankAmount = 0;
+                    progress = 100;
+                    logCommand('✅ تم نشر كمية البذور المطلوبة بالكامل وتوقفت العملية أوتوماتيكياً.');
+                    currentTask = 'idle';
+                }
+            } else if (currentTask === 'scan' || currentTask === 'soil') {
+                progress += 0.4;
+                if (progress >= 100) {
+                    progress = 100;
+                    logCommand(`✅ اكتملت عملية ${currentTask === 'scan' ? 'رصد NDVI' : 'فحص التربة'} بنجاح.`);
+                    currentTask = 'idle';
+                }
+            }
+            updateHud();
+
+            // Render Particles
+            for(let i = particles.length - 1; i >= 0; i--) {
+                let p = particles[i];
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                ctx.fillStyle = p.color;
+                ctx.globalAlpha = p.alpha;
+                ctx.fill();
+                ctx.globalAlpha = 1.0;
+                p.alpha -= 0.01;
+                if(p.alpha <= 0) particles.splice(i, 1);
+            }
+
+            // Draw Target Pin
+            ctx.beginPath();
+            ctx.arc(drone.targetX, drone.targetY, 6, 0, Math.PI * 2);
+            ctx.strokeStyle = '#84cc16';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Draw Drone Icon/Graphic
+            ctx.save();
+            ctx.translate(drone.x, drone.y);
+            
+            // Drone Arms & Rotors
+            ctx.strokeStyle = '#06b6d4';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(-20, -20); ctx.lineTo(20, 20);
+            ctx.moveTo(20, -20); ctx.lineTo(-20, 20);
+            ctx.stroke();
+
+            // Rotors
+            ctx.fillStyle = '#84cc16';
+            [[-20,-20],[20,-20],[-20,20],[20,20]].forEach(pt => {
+                ctx.beginPath();
+                ctx.arc(pt[0], pt[1], 8, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
+            // Body Center
+            ctx.fillStyle = '#0d1829';
+            ctx.strokeStyle = '#84cc16';
+            ctx.beginPath();
+            ctx.arc(0, 0, 12, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.restore();
+
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        // NDVI Image Slider Update
+        function updateNdviSlider(val) {
+            document.getElementById('ndviLayer').style.width = `${val}%`;
+        }
+
+        // Telemetry Chart Setup
+        const ctxChart = document.getElementById('telemetryChart').getContext('2d');
+        const telemetryChart = new Chart(ctxChart, {
+            type: 'line',
+            data: {
+                labels: ['08:00', '10:00', '12:00', '14:00', '16:00', '18:00'],
+                datasets: [
+                    {
+                        label: 'رطوبة التربة (%)',
+                        data: [38, 40, 42, 41, 45, 42],
+                        borderColor: '#06b6d4',
+                        backgroundColor: 'rgba(6, 182, 212, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    },
+                    {
+                        label: 'النيتروجين (PPM)',
+                        data: [70, 72, 75, 78, 77, 78],
+                        borderColor: '#84cc16',
+                        backgroundColor: 'rgba(132, 204, 22, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { labels: { color: '#94a3b8', font: { family: 'Cairo' } } }
+                },
+                scales: {
+                    x: { ticks: { color: '#64748b' }, grid: { color: 'rgba(30, 41, 59, 0.5)' } },
+                    y: { ticks: { color: '#64748b' }, grid: { color: 'rgba(30, 41, 59, 0.5)' } }
+                }
+            }
+        });
+
+        // ROI Calculator Logic
+        function calculateROI() {
+            const area = document.getElementById('areaSlider').value;
+            const crop = document.getElementById('cropType').value;
+            document.getElementById('areaVal').innerText = area;
+
+            let multiplier = 250;
+            let waterMultiplier = 7000;
+
+            if (crop === 'fruits') { multiplier = 400; waterMultiplier = 10000; }
+            if (crop === 'vegetables') { multiplier = 320; waterMultiplier = 8500; }
+
+            const savings = area * multiplier;
+            const water = area * waterMultiplier;
+
+            document.getElementById('roiSavings').innerText = `$${savings.toLocaleString()}`;
+            document.getElementById('roiWater').innerText = `${water.toLocaleString()} لتر`;
+        }
+    </script>
+</body>
+</html>
